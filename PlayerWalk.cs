@@ -17,6 +17,7 @@ public class PlayerWalk : MonoBehaviour
         {
             audioplayer.Play();
             audioplayer.loop = true;
+
         }
 
 

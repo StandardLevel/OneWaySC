@@ -38,7 +38,6 @@ public class DoorGhost : MonoBehaviour
                 {
                     GM.Ghoston2 = false;
                     Destroy(this.gameObject);
-                    player.DoorImpact = false;
                 }
             }
         }

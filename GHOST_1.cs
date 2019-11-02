@@ -11,7 +11,7 @@ public class GHOST_1 : MonoBehaviour
     GameObject Ghost;
     Animator animator;
     public float Destoryspeed = 5f;
-    Vector3 zero = new Vector3(0, 0, 0);
+   
     GameManager GM;
   
 
@@ -49,7 +49,7 @@ public class GHOST_1 : MonoBehaviour
 
         transform.Translate(Vector3.forward * SPEED * Time.deltaTime, Space.World);
         Vector3 vec = new Vector3(player.transform.position.x - this.transform.position.x, 0, player.transform.position.z - this.transform.position.z);
-        transform.rotation = Quaternion.LookRotation(vec, zero);
+        transform.rotation = Quaternion.LookRotation(vec, new Vector3(0, 0, 0));
 
         if (player.Die == true)
         {

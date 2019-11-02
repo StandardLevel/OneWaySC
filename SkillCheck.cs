@@ -9,8 +9,10 @@ public class SkillCheck : MonoBehaviour
     Gauge Gauge;
     SpawnSkillCheck spawn;
     bool trigger = false;
-    public string PSound;
-    public string GSound;
+    [SerializeField]
+    private string PSound;
+    [SerializeField]
+    private string GSound;
     GameManager GM;
 
     void OnTriggerEnter(Collider col)
@@ -46,7 +48,7 @@ public class SkillCheck : MonoBehaviour
             {
                 SoundManager.instance.PlaySE(GSound);
                 Debug.Log("Good");
-                Gauge.gauge += 40;
+                Gauge.gauge += 5;
             }
         }
         else if (trigger == false && Gauge.gauge > 0 && this.name == "Good")

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    //테스트
     GameObject doorghost;
     public Animation anim;
     public Animation Door;
@@ -11,13 +12,14 @@ public class Player : MonoBehaviour
     public bool handleLook = false;
     public bool Block = false;
     public byte backon = 0;
+    public byte expand = 0;
     public float Speed;
     public float UDSpeed;
     public float RLSpeed;
     public float BTSpeed;
     public bool Die = false;
     bool stop = false;
-    public byte expand = 0;
+    
     float btime = 1.5f;
     float Look1 = 0;
     float Look2 = 5;
@@ -35,11 +37,18 @@ public class Player : MonoBehaviour
     float eular1=75;
     float Opposite = 1;
     public string DoorBlock;
+    public string DoorImpact;
     GameManager GM;
     public bool first;
     public bool NoteOn;
-    DoorOpen dooris;
-    public bool DoorImpact = false;
+
+    public Light Light1;
+    public Light Light2;
+    public Light Light3;
+    public bool On= true;
+    float Switchy;
+    Transform Switchtr;
+ 
 
 
 
@@ -183,6 +192,35 @@ public class Player : MonoBehaviour
             }
         }
     }
+    
+
+   
+
+    IEnumerator LightON()
+    {
+        yield return new WaitForSeconds(0.4f);
+        Switchtr = GameObject.Find("Switch").GetComponent<Transform>();
+        Switchtr.Rotate(new Vector3(0, -30, 0));
+        yield return new WaitForSeconds(0.1f);
+        Light1.intensity = 1;
+        Light2.intensity = 1;
+        Light3.intensity = 1;
+        On = true;      
+    }
+
+    IEnumerator LightOFF()
+    {
+        yield return new WaitForSeconds(0.4f);
+        Switchtr = GameObject.Find("Switch").GetComponent<Transform>();
+        Switchtr.Rotate(new Vector3(0, 30, 0));
+        yield return new WaitForSeconds(0.1f);
+        Light1.intensity = 0;
+        Light2.intensity = 0;
+        Light3.intensity = 0;
+        On = false;
+    }
+
+   
     void Zoomin()
     {
         if (Die == false)
@@ -222,6 +260,25 @@ public class Player : MonoBehaviour
                     {
                         hit.transform.gameObject.GetComponent<Note>().ClickOn = true;
                     }
+
+
+                }
+
+                if (Physics.Raycast(ray, out hit, 5f))
+                {
+                    if (hit.collider.tag == "Switch" && On)
+                    {
+                        anim.Play("GoSwitch");
+                        StartCoroutine("LightOFF");
+                                             
+                       
+                    }
+                    else if (hit.collider.tag == "Switch" && !On)
+                    {
+                        anim.Play("GoSwitch");
+                        StartCoroutine("LightON");
+
+                    }
                 }
             }
             if (expand == 2 && backon == 0 && Input.GetKeyDown(KeyCode.Space))
@@ -260,7 +317,6 @@ public class Player : MonoBehaviour
         Door = GameObject.Find("Door").GetComponent<Animation>();
         Ypos = this.transform.position.y;
         Zrot = this.transform.rotation.z;
-        dooris = GameObject.Find("DoorAxis").GetComponent<DoorOpen>();
     }
 
     void MoveChange()
@@ -268,8 +324,12 @@ public class Player : MonoBehaviour
         move = 60;
     }
 
-    void Update()
+   
+
+        void Update()
     {
+       
+        
         if (transform.position.z < move)
         {
             Move();
@@ -282,6 +342,8 @@ public class Player : MonoBehaviour
         GhostLook1();
         GhostLook2();
         Zoomin();
+        
+
         if (GM.Ghoston == false)
         {
             Look1 = 0;
@@ -316,16 +378,12 @@ public class Player : MonoBehaviour
         }
 
         if (expand == 4 && GM.Ghoston2 == true || expand == 5 && GM.Ghoston2 == true)
-        {            
+        {
             doorghost = GameObject.Find("DoorGhost(Clone)");
             if (doorghost.transform.position.z <= 47)
             {
-                if(DoorImpact == false)
-                {
-                dooris.DoorIS();
-                Debug.Log(dooris + "문막기성공");
-                    DoorImpact = true;
-                } 
+                SoundManager.instance.PlaySE(DoorImpact);               
+                
                 Door.Play("DoorSuperWave");
                 Vector3 vec = new Vector3(0, 0, 0.01f * Mathf.Cos(value += 30 * Time.deltaTime));
                 this.transform.position += vec;
